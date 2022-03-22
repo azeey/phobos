@@ -210,7 +210,7 @@ def getOutputMeshpath(path, meshtype=None, pathType="relative"):
 
     """
     # pathType relative is default
-    rpath = os.path.join(path, 'meshes', meshtype if meshtype else getOutputMeshtype()) + "/"
+    rpath = os.path.join(path, 'meshes')
 
     if not pathType:
         pathType = getOutputPathtype()
@@ -531,7 +531,7 @@ def exportModel(model, exportpath='.', entitytypes=None):
         if not getattr(bpy.context.scene, typename, False):
             continue
         # format exists and is exported:
-        model_path = os.path.join(exportpath, entitytype)
+        model_path = os.path.join(exportpath)
         securepath(model_path)
 
         # export model using entity export function
