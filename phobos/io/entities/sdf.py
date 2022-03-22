@@ -33,7 +33,7 @@ from phobos.phoboslog import log
 # https://bitbucket.org/osrf/sdformat/src/ --> Migration.md
 # https://bitbucket.org/osrf/sdformat/src/ --> sdf/Migration.md
 # https://bitbucket.org/osrf/sdformat/src/ --> sdf/*.sdf files
-sdfversion = "1.5"
+sdfversion = "1.6"
 
 # Joint mapping from URDF to SDF
 jointmapping = {
@@ -247,6 +247,10 @@ def exportSDFPose(relativepose, indentation, poseobject=None, relative=False):
     # only translation and euler rotation are required
     tra = posedata['translation']
     rot = posedata['rotation_euler']
+    identity_tra = [0., 0., 0.]
+    identity_rot = [0., 0., 0.]
+    if tra == identity_tra and rot == identity_rot:
+        return ""
     result = '{0} {1} {2} {3} {4} {5}'.format(tra[0], tra[1], tra[2], rot[0], rot[1], rot[2])
     tagger.attrib('pose', result)
     return "".join(tagger.get_output())
@@ -481,7 +485,8 @@ def exportSDFGeometry(geometrydata, indentation, modelname):
         #     REQ: tagger.attrib('name', ...)
         #     OPT: tagger.attrib('center', ...)
         #     tagger.ascend()
-        tagger.attrib('scale', '{0} {1} {2}'.format(*geometrydata['scale']))
+        if geometrydata['scale'] != [1., 1., 1.]:
+            tagger.attrib('scale', '{0} {1} {2}'.format(*geometrydata['scale']))
         tagger.ascend()
     # elif geometrydata['type'] == 'plane':
     #     OPT: tagger.descend('plane')
