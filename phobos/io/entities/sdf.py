@@ -563,14 +563,14 @@ def exportSDFVisual(visualobj, linkobj, visualdata, indentation, modelname):
 
     # write material data if available
     if 'material' in visualdata:
-        tagger.write(exportSDFMaterial(visualdata['material'], tagger.get_indent()))
+        tagger.write(exportSDFMaterial(visualdata['material'], tagger.get_indent(), modelname))
 
     tagger.write(exportSDFGeometry(visualdata['geometry'], tagger.get_indent(), modelname))
     tagger.ascend()
     return "".join(tagger.get_output())
 
 
-def exportSDFMaterial(materialdata, indentation):
+def exportSDFMaterial(materialdata, indentation, modelname):
     """Simple wrapper for material data of visual objects.
     The materialdata is the model dictionary of the specific material.
 
@@ -612,6 +612,16 @@ def exportSDFMaterial(materialdata, indentation):
         tagger.attrib(
             'emissive', '{0} {1} {2} {3}'.format(emission['r'], emission['g'], emission['b'], 1.0)
         )
+
+    tagger.descend('pbr')
+    pbr_uri_prefix = 'model://{}/materials/textures/{}'.format(modelname, materialdata['name'])
+    tagger.descend('metal')
+    tagger.attrib('albedo_map', pbr_uri_prefix + "_Albedo.png")
+    tagger.attrib('normal_map', pbr_uri_prefix + "_Normal.png")
+    tagger.attrib('metalness_map', pbr_uri_prefix + "_Metalness.png")
+    tagger.attrib('roughness_map', pbr_uri_prefix + "_Roughness.png")
+    tagger.ascend()
+    tagger.ascend()
     tagger.ascend()
     return "".join(tagger.get_output())
 
