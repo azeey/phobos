@@ -729,12 +729,16 @@ def exportSDFJoint(jointdict, indentation):
     tagger = xmlTagger(initial=indentation)
     # use sdf joint names instead URDF
     sdftype = jointmapping[jointdict['type']]
-    tagger.descend('joint', {'name': jointdict['name'], 'type': sdftype})
+    joint_name = jointdict['name'] + "_joint"
+    tagger.descend('joint', {
+        'name': joint_name,
+        'type': sdftype
+    })
     # FINAL remove when all joints are finished
     if sdftype == 'TODO':
         log(
             "Joint type '{}' at joint '{}' not supported yet.".format(
-                jointdict['type'], jointdict['name']
+                jointdict['type'], joint_name
             ),
             'ERROR',
         )
@@ -764,10 +768,10 @@ def exportSDFJoint(jointdict, indentation):
             if 'lower' in jointdict['limits']:
                 tagger.attrib('lower', jointdict['limits']['lower'])
             else:
-                log("Lower limit is missing for joint '{}'.".format(jointdict['name']), 'WARNING')
+                log("Lower limit is missing for joint '{}'.".format(joint_name), 'WARNING')
                 tagger.attrib('lower', '')
             if 'upper' in jointdict['limits'].keys():
-                log("Upper limit is missing for joint '{}'.".format(jointdict['name']), 'WARNING')
+                log("Upper limit is missing for joint '{}'.".format(joint_name), 'WARNING')
                 tagger.attrib('upper', jointdict['limits']['upper'])
             else:
                 tagger.attrib('upper', '')
